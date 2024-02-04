@@ -13,6 +13,9 @@
             margin: auto;
             width: fit-content;
         }
+        nav{
+            text-align: left;
+        }
         #gameStatus{
             text-align: left;
             font-size: 2rem;
@@ -23,17 +26,30 @@
         .click{
             cursor: pointer;
         }
+
+        @media screen and (min-width: 600px) {
+            main {
+                display: grid;
+                grid-template-columns: 1fr 2fr;
+                column-gap: 5%;
+            }
+        }
     </style>
     <title>Tic Tac Toe</title>
 </head>
 <body>
     <h1>Tic Tac Toe</h1>
-    <sidenav>
-        <button type="button" onclick="resetBoard()">Restart Game</button>
-    </sidenav>
+    
     <main>
-        <canvas id="defaultCanvas0" class="p5Canvas click"></canvas>
-        <div id="gameStatus"></div>
+        <nav>
+            <button type="button" onclick="resetBoard()">Restart Game</button>
+        </nav>    
+        <div>
+            <canvas id="defaultCanvas0" class="p5Canvas click"></canvas>
+            <div id="gameStatus"></div>
+        </div>
+        
+        
     </main>
 </body>
 </html>

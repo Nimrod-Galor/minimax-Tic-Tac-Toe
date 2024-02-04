@@ -19,9 +19,14 @@ function draw() {
 
 function mouseClicked() {
     if(currentPlayre === "o"){
+        console.log(`x: ${mouseX} y: ${mouseY}`);
         // stop user from mouse clicks
-        currentPlayre = "oo";
-        playerMove(mouseX, mouseY);
+        
+        if(mouseX > gridGutter && mouseX < (gridSize - gridGutter) & mouseY > gridGutter && mouseY < (gridSize - gridGutter)){
+            currentPlayre = "oo";
+            playerMove(mouseX, mouseY);
+        }
+        
     }
 }
 
@@ -72,7 +77,7 @@ function resetBoard(){
 }
 
 function playerMove(x, y){
-    //console.log(`x: ${x} y: ${y}`);
+    console.log(`x: ${x} y: ${y}`);
     // check selected tile
     let posX = Math.floor((x - gridGutter) / (tileSize + gridGutter));
     let posY = Math.floor((y - gridGutter) / (tileSize + gridGutter));

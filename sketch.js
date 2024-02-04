@@ -77,12 +77,15 @@ function resetBoard(){
 }
 
 function playerMove(x, y){
-    console.log(`x: ${x} y: ${y}`);
     // check selected tile
     let posX = Math.floor((x - gridGutter) / (tileSize + gridGutter));
     let posY = Math.floor((y - gridGutter) / (tileSize + gridGutter));
     let index = posX + posY * 3;
-    console.log(`posX: ${posX} posY: ${posY} index: ${index}`);
+    // check tile is free
+    if(board[index] != ''){
+        currentPlayre = "o";
+        return;
+    }
     // update board
     board[index] = 'o';
     let isWin = checkWin();

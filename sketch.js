@@ -3,12 +3,19 @@ const gridGutter = 5;
 const tileSize = (gridSize - (gridGutter * 4)) / 3;
 
 let shake = -1;
+
+let winPath = [];
+
+
+
+
 let currentPlayre = "x";
 const board = [];
 
 function setup() {
     createCanvas(gridSize, gridSize, document.getElementById("defaultCanvas0"));
     resetBoard();
+    winWave.dx = (TWO_PI / winWave.period) * winWave.xspacing; // Value for incrementing x
 }
   
 function draw() {
@@ -16,6 +23,9 @@ function draw() {
     // draw grid
     drawGrid();
     drawBoard();
+    if(winPath.length > 0){
+        winWave.calcWave();
+    }
 }
 
 function mouseClicked() {
@@ -42,19 +52,45 @@ function drawGrid(){
     }
 }
 
+const winWave = {
+    xspacing : 12.5, // Distance between each horizontal location
+    w : gridSize / 2, // Width of entire wave
+    theta : 0.0, // Start angle at 0
+    amplitude : 25.0, // Height of wave
+    period : 50.0, // How many pixels before the wave repeats
+    dx: 0, // Value for incrementing x
+    yvalues : new Array(3), // Using an array to store height values for the wave
+    calcWave : function () {
+        // Increment theta (try different values for
+        // 'angular velocity' here)
+        this.theta += 0.25;
+      
+        // For every x value, calculate a y value with sine function
+        let x = this.theta;
+        for (let i = 0; i < this.yvalues.length; i++) {
+          this.yvalues[i] = sin(x) * this.amplitude;
+          x += this.dx;
+        }
+    }
+}
+
 function drawBoard(){
     strokeWeight(gridGutter * 2);
     for(let i=0; i<9; i++){
         if(board[i] != ''){
+            // shake
             if(shake === i){
                 translate(random(-5,5),random(-5,5));
             }
+            // win
+            if(winPath.indexOf(i) != -1){
+                let index = winPath.indexOf(i);
+                translate(0, winWave.yvalues[index]);
+            }
+
             let posX = (1 + (i % 3))
             let posY = Math.floor(i / 3);
             if(board[i] === 'x'){
-                // posX = posX * tileSize - (tileSize * 0.80) + (gridGutter * posX );
-                // posY= posY  * tileSize + gridGutter + (tileSize * 0.2) + (gridGutter * posY );
-                //rect(posX, posY, tileSize * 0.6, tileSize * 0.6);
                 let x1 = posX * tileSize - (tileSize * 0.80) + (gridGutter * posX );
                 let y1 = posY  * tileSize + gridGutter + (tileSize * 0.2) + (gridGutter * posY );
                 let x2 = x1 + tileSize * 0.60;
@@ -72,6 +108,11 @@ function drawBoard(){
 }
 
 function resetBoard(){
+    shake = -1;
+    scaleIndex = 0;
+    scaleWeight = 1.1;
+    scaleDir = 1;
+    winPath = [];
     currentPlayre = "x";
     for(let i=0; i<9; i++){
         //board[i] = Math.round(Math.random()) == 1 ? 'x' : 'o';
@@ -103,7 +144,8 @@ function playerMove(x, y){
         // game End with tie
         updateStatus("Game Tie");
     }else{
-        // we have a win
+        // we have a win+
+        winPath = isWin.path;
         updateStatus(`${isWin.status} wins game.`);
     }
     
@@ -135,6 +177,7 @@ function computerMove(){
         updateStatus("Game Tie");
     }else{
         // we have a win
+        winPath = isWin.path;
         updateStatus(`${isWin.status} wins game.`);
     }
     

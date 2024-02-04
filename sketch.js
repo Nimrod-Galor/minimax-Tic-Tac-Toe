@@ -63,8 +63,10 @@ const winWave = {
     calcWave : function () {
         // Increment theta (try different values for
         // 'angular velocity' here)
-        this.theta += 0.25;
-      
+        //this.theta += 0.25;
+        this.theta += 0.7;
+        this.amplitude *= 0.95;
+
         // For every x value, calculate a y value with sine function
         let x = this.theta;
         for (let i = 0; i < this.yvalues.length; i++) {
@@ -109,10 +111,9 @@ function drawBoard(){
 
 function resetBoard(){
     shake = -1;
-    scaleIndex = 0;
-    scaleWeight = 1.1;
-    scaleDir = 1;
     winPath = [];
+    winWave.theta = 0.0;
+    winWave.amplitude = 25.0;
     currentPlayre = "x";
     for(let i=0; i<9; i++){
         //board[i] = Math.round(Math.random()) == 1 ? 'x' : 'o';

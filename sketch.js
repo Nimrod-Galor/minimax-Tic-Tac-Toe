@@ -8,7 +8,6 @@ const board = [];
 function setup() {
     createCanvas(gridSize, gridSize, document.getElementById("defaultCanvas0"));
     resetBoard();
-    computerMove();
 }
   
 function draw() {
@@ -19,8 +18,8 @@ function draw() {
 }
 
 function mouseClicked() {
-    console.log(`mouse clicked currentPlayre: ${currentPlayre}`);
     if(currentPlayre === "o"){
+        // stop user from mouse clicks
         currentPlayre = "oo";
         playerMove(mouseX, mouseY);
     }
@@ -52,11 +51,6 @@ function drawBoard(){
                 let x2 = x1 + tileSize * 0.60;
                 let y2 = y1 + tileSize * 0.60;
                 line(x1, y1, x2, y2);
-
-                //let x3 = posX * tileSize - (tileSize * 0.80) + (gridGutter * posX );
-                let y3 = posY  * tileSize + gridGutter + (tileSize * 0.2) + (gridGutter * posY );
-                let x4 = x1 + tileSize * 0.60;
-                let y4 = y1 + tileSize * 0.60;
                 line(x2, y1, x1, y2);
             }else{
                 posX = posX  * tileSize - (tileSize / 2) + (gridGutter * posX );
@@ -68,16 +62,17 @@ function drawBoard(){
 }
 
 function resetBoard(){
+    currentPlayre = "x";
     for(let i=0; i<9; i++){
         //board[i] = Math.round(Math.random()) == 1 ? 'x' : 'o';
         board[i] = '';
     }
+    updateStatus("Computer turn");
+    setTimeout(computerMove, 1000);
 }
 
 function playerMove(x, y){
-    // stop user from mouse clicks
-    
-    console.log(`x: ${x} y: ${y}`);
+    //console.log(`x: ${x} y: ${y}`);
     // check selected tile
     let posX = Math.floor((x - gridGutter) / (tileSize + gridGutter));
     let posY = Math.floor((y - gridGutter) / (tileSize + gridGutter));
@@ -88,7 +83,7 @@ function playerMove(x, y){
     let isWin = checkWin();
     if(isWin === null){
         updateStatus("Computer turn");
-        computerMove();
+        setTimeout(computerMove, 1000);
     }else if(isWin.status === 'tie'){
         // game End with tie
         updateStatus("Game Tie");
@@ -209,5 +204,11 @@ function minimax(player){
 }
 
 function updateStatus(status){
+    if(status === "User turn"){
+        document.getElementById("defaultCanvas0").classList.add("click");
+    }else{
+        document.getElementById("defaultCanvas0").classList.remove("click");
+    }
+    
     document.getElementById("gameStatus").innerHTML = status;
 }

@@ -2,6 +2,7 @@ const gridSize = 600;
 const gridGutter = 5;
 const tileSize = (gridSize - (gridGutter * 4)) / 3;
 
+let shake = -1;
 let currentPlayre = "x";
 const board = [];
 
@@ -45,6 +46,9 @@ function drawBoard(){
     strokeWeight(gridGutter * 2);
     for(let i=0; i<9; i++){
         if(board[i] != ''){
+            if(shake === i){
+                translate(random(-5,5),random(-5,5));
+            }
             let posX = (1 + (i % 3))
             let posY = Math.floor(i / 3);
             if(board[i] === 'x'){
@@ -62,6 +66,7 @@ function drawBoard(){
                 posY = posY * tileSize +  (tileSize / 2) + (gridGutter * (1 + posY));
                 circle(posX, posY, tileSize * 0.60);
             }
+            resetMatrix();
         }
     }
 }
@@ -83,6 +88,8 @@ function playerMove(x, y){
     let index = posX + posY * 3;
     // check tile is free
     if(board[index] != ''){
+        shake = index;
+        setTimeout(function(){shake = -1}, 600);
         currentPlayre = "o";
         return;
     }

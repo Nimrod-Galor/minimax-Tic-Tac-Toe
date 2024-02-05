@@ -1,16 +1,34 @@
 const gridSize = 600;
 const gridGutter = 5;
 const tileSize = (gridSize - (gridGutter * 4)) / 3;
-
+const board = [];
+let currentPlayre = "x";
 let shake = -1;
 
-let winPath = [];
+const winWave = {
+    winPath : [],
+    xspacing : 12.5, // Distance between each horizontal location
+    w : gridSize / 2, // Width of entire wave
+    theta : 0.0, // Start angle at 0
+    amplitude : 25.0, // Height of wave
+    period : 50.0, // How many pixels before the wave repeats
+    dx: 0, // Value for incrementing x
+    yvalues : new Array(3), // Using an array to store height values for the wave
+    calcWave : function () {
+        // Increment theta (try different values for
+        // 'angular velocity' here)
+        //this.theta += 0.25;
+        this.theta += 0.7;
+        this.amplitude *= 0.95;
 
-
-
-
-let currentPlayre = "x";
-const board = [];
+        // For every x value, calculate a y value with sine function
+        let x = this.theta;
+        for (let i = 0; i < this.yvalues.length; i++) {
+          this.yvalues[i] = sin(x) * this.amplitude;
+          x += this.dx;
+        }
+    }
+}
 
 function setup() {
     createCanvas(gridSize, gridSize, document.getElementById("defaultCanvas0"));
@@ -20,10 +38,9 @@ function setup() {
   
 function draw() {
     background(0);
-    // draw grid
     drawGrid();
     drawBoard();
-    if(winPath.length > 0){
+    if(winWave.winPath.length > 0){
         winWave.calcWave();
     }
 }
@@ -52,29 +69,7 @@ function drawGrid(){
     }
 }
 
-const winWave = {
-    xspacing : 12.5, // Distance between each horizontal location
-    w : gridSize / 2, // Width of entire wave
-    theta : 0.0, // Start angle at 0
-    amplitude : 25.0, // Height of wave
-    period : 50.0, // How many pixels before the wave repeats
-    dx: 0, // Value for incrementing x
-    yvalues : new Array(3), // Using an array to store height values for the wave
-    calcWave : function () {
-        // Increment theta (try different values for
-        // 'angular velocity' here)
-        //this.theta += 0.25;
-        this.theta += 0.7;
-        this.amplitude *= 0.95;
 
-        // For every x value, calculate a y value with sine function
-        let x = this.theta;
-        for (let i = 0; i < this.yvalues.length; i++) {
-          this.yvalues[i] = sin(x) * this.amplitude;
-          x += this.dx;
-        }
-    }
-}
 
 function drawBoard(){
     strokeWeight(gridGutter * 2);
@@ -85,8 +80,8 @@ function drawBoard(){
                 translate(random(-5,5),random(-5,5));
             }
             // win
-            if(winPath.indexOf(i) != -1){
-                let index = winPath.indexOf(i);
+            if(winWave.winPath.indexOf(i) != -1){
+                let index = winWave.winPath.indexOf(i);
                 translate(0, winWave.yvalues[index]);
             }
 
@@ -111,7 +106,7 @@ function drawBoard(){
 
 function resetBoard(){
     shake = -1;
-    winPath = [];
+    winWave.winPath = [];
     winWave.theta = 0.0;
     winWave.amplitude = 25.0;
     currentPlayre = "x";
@@ -146,7 +141,7 @@ function playerMove(x, y){
         updateStatus("Game Tie");
     }else{
         // we have a win+
-        winPath = isWin.path;
+        winWave.winPath = isWin.path;
         updateStatus(`${isWin.status} wins game.`);
     }
     
@@ -178,7 +173,7 @@ function computerMove(){
         updateStatus("Game Tie");
     }else{
         // we have a win
-        winPath = isWin.path;
+        winWave.winPath = isWin.path;
         updateStatus(`${isWin.status} wins game.`);
     }
     
@@ -220,7 +215,6 @@ function checkWin(){
     }
 
     return {status: 'tie'};
-
 }
 
 const scores = {
@@ -237,7 +231,6 @@ function minimax(player){
     }
     if(player == 'x'){
         let bestScore = -Infinity;
-        //let nextPlayer = player === 'x' ? 'o' : 'x';
         for(let i = 0 ; i < 9; i++){
             if(board[i] === ''){
                 board[i] = 'x';
@@ -249,7 +242,6 @@ function minimax(player){
         return bestScore;
     }else{
         let bestScore = Infinity;
-        //let nextPlayer = player === 'x' ? 'o' : 'x';
         for(let i = 0 ; i < 9; i++){
             if(board[i] === ''){
                 board[i] = 'o';

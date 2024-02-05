@@ -2,6 +2,7 @@ const gridSize = 600;
 const gridGutter = 5;
 const tileSize = (gridSize - (gridGutter * 4)) / 3;
 const board = [];
+let firstPlayer = "x";
 let currentPlayre = "x";
 let shake = -1;
 
@@ -47,14 +48,11 @@ function draw() {
 
 function mouseClicked() {
     if(currentPlayre === "o"){
-        console.log(`x: ${mouseX} y: ${mouseY}`);
-        // stop user from mouse clicks
-        
         if(mouseX > gridGutter && mouseX < (gridSize - gridGutter) & mouseY > gridGutter && mouseY < (gridSize - gridGutter)){
+            // stop user from mouse clicks
             currentPlayre = "oo";
             playerMove(mouseX, mouseY);
         }
-        
     }
 }
 
@@ -68,8 +66,6 @@ function drawGrid(){
         }
     }
 }
-
-
 
 function drawBoard(){
     strokeWeight(gridGutter * 2);
@@ -109,13 +105,18 @@ function resetBoard(){
     winWave.winPath = [];
     winWave.theta = 0.0;
     winWave.amplitude = 25.0;
-    currentPlayre = "x";
+    currentPlayre = firstPlayer === "x" ? "x" : "o";
     for(let i=0; i<9; i++){
         //board[i] = Math.round(Math.random()) == 1 ? 'x' : 'o';
         board[i] = '';
     }
-    updateStatus("Computer turn");
-    setTimeout(computerMove, 1000);
+    
+    if(firstPlayer === "x"){
+        updateStatus("Computer turn");
+        setTimeout(computerMove, 1000);
+    }else{
+        updateStatus("User turn");
+    }
 }
 
 function playerMove(x, y){
@@ -262,4 +263,9 @@ function updateStatus(status){
     }
     
     document.getElementById("gameStatus").innerHTML = status;
+}
+
+function firstTurnChange(evt){
+    console.log(evt.target.id);
+    firstPlayer = evt.target.id === "fturnComp" ? "x" : "o";
 }

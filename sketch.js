@@ -1,6 +1,6 @@
-const gridSize = 600;
+let gridSize = 600;
 const gridGutter = 5;
-const tileSize = (gridSize - (gridGutter * 4)) / 3;
+let tileSize = (gridSize - (gridGutter * 4)) / 3;
 const board = [];
 let firstPlayer = "x";
 let currentPlayre = "x";
@@ -30,6 +30,16 @@ const winWave = {
         }
     }
 }
+
+function windowResized() {
+    gridSize = Math.min(600, windowWidth * 0.6);
+    if(windowWidth <= 600){
+      gridSize = windowWidth * 0.9;
+    }
+    tileSize = (gridSize - (gridGutter * 4)) / 3;
+    console.log(`win resize grid size: ${gridSize}`);
+    resizeCanvas(gridSize, gridSize);
+  }
 
 function setup() {
     createCanvas(gridSize, gridSize, document.getElementById("defaultCanvas0"));
